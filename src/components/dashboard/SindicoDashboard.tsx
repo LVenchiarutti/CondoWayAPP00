@@ -1,12 +1,13 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Users, Building, Send } from 'lucide-react';
 
 interface SindicoDashboardProps {
   user: any;
+  setCurrentPage: (page: string) => void;
 }
 
-const SindicoDashboard = ({ user }: SindicoDashboardProps) => {
+const SindicoDashboard = ({ user, setCurrentPage }: SindicoDashboardProps) => {
   const stats = {
     reservasHoje: 8,
     moradoresTotal: 45,
@@ -96,23 +97,14 @@ const SindicoDashboard = ({ user }: SindicoDashboardProps) => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button className="h-16 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
-              <div className="text-center">
-                <div className="text-2xl mb-1">👨‍👩‍👧‍👦</div>
-                <div>Gerenciar Moradores</div>
-              </div>
+            <Button className="h-16 text-white bg-blue-600 hover:bg-blue-700" onClick={() => setCurrentPage('moradores')}>
+              <Users className="👨‍👩‍👧‍👦" /> Gerenciar Moradores 
             </Button>
-            <Button className="h-16 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700">
-              <div className="text-center">
-                <div className="text-2xl mb-1">🏢</div>
-                <div>Gestão de Ambientes</div>
-              </div>
+            <Button className="h-16 text-white bg-green-600 hover:bg-green-700" onClick={() => setCurrentPage('ambientes')}>
+              <Building className="mr-2 h-4 w-4" /> Gestão de Ambientes
             </Button>
-            <Button className="h-16 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700">
-              <div className="text-center">
-                <div className="text-2xl mb-1">📢</div>
-                <div>Enviar Comunicado</div>
-              </div>
+            <Button className="h-16 text-white bg-purple-600 hover:bg-purple-700" onClick={() => setCurrentPage('comunicados')}>
+              <Send className="mr-2 h-4 w-4" /> Enviar Comunicado
             </Button>
           </div>
         </CardContent>
@@ -121,9 +113,7 @@ const SindicoDashboard = ({ user }: SindicoDashboardProps) => {
       {/* Recent Reservations */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            📋 Reservas Recentes
-          </CardTitle>
+          <CardTitle>Reservas Recentes</CardTitle>
           <CardDescription>Últimas reservas realizadas</CardDescription>
         </CardHeader>
         <CardContent>
@@ -134,7 +124,7 @@ const SindicoDashboard = ({ user }: SindicoDashboardProps) => {
                   <h4 className="font-medium text-gray-900">{reserva.morador}</h4>
                   <p className="text-sm text-gray-600">{reserva.ambiente} • {reserva.horario}</p>
                 </div>
-                <Button variant="outline" size="sm">Detalhes</Button>
+                <Button variant="outline" size="sm" onClick={() => setCurrentPage('reservas')}>Detalhes</Button>
               </div>
             ))}
           </div>

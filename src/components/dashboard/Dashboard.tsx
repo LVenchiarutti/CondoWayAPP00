@@ -11,6 +11,9 @@ import CadastroVisitantes from '../visitantes/CadastroVisitantes';
 import Configuracoes from '../settings/Configuracoes';
 import MinhaConta from '../settings/MinhaConta';
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import GestaoMoradores from '../sindico/GestaoMoradores';
+import TodasReservas from '../sindico/TodasReservas';
+import GestaoAmbientes from '../sindico/GestaoAmbientes'; // 1. Importe o novo componente
 
 interface DashboardProps {
   user: any;
@@ -29,17 +32,26 @@ const Dashboard = ({ user, setUser }: DashboardProps) => {
   const renderContent = () => {
     switch (currentPage) {
       case 'dashboard':
-        if (user.user_tipo === 'sindico') return <SindicoDashboard user={user} />;
-        if (user.user_tipo === 'porteiro') return <PorteiroDashboard user={user} />;
+        if (user.user_tipo === 'sindico') return <SindicoDashboard user={user} setCurrentPage={handlePageChange} />;
+        if (user.user_tipo === 'porteiro') return <PorteiroDashboard user={user} setCurrentPage={handlePageChange} />;
         return <MoradorDashboard user={user} setCurrentPage={handlePageChange} />;
       case 'ambientes':
+        // 2. Mostra a tela de GESTÃO para o síndico e de RESERVA para os outros
+        if (user.user_tipo === 'sindico') {
+          return <GestaoAmbientes setCurrentPage={handlePageChange} />;
+        }
         return <Ambientes user={user} />;
       case 'reservas':
+        if (user.user_tipo === 'sindico') {
+          return <TodasReservas />;
+        }
         return <MinhasReservas user={user} />;
       case 'comunicados':
         return <Comunicados user={user} />;
       case 'visitantes':
         return <CadastroVisitantes user={user} />;
+      case 'moradores':
+        return <GestaoMoradores />;
       case 'configuracoes':
         return <Configuracoes />;
       case 'conta':
