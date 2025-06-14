@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import Header from './Header';
 import Navigation from './Navigation';
@@ -11,6 +10,7 @@ import Comunicados from '../comunicados/Comunicados';
 import CadastroVisitantes from '../visitantes/CadastroVisitantes';
 import Configuracoes from '../settings/Configuracoes';
 import MinhaConta from '../settings/MinhaConta';
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 interface DashboardProps {
   user: any;
@@ -19,13 +19,19 @@ interface DashboardProps {
 
 const Dashboard = ({ user, setUser }: DashboardProps) => {
   const [currentPage, setCurrentPage] = useState('dashboard');
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+  const handlePageChange = (page: string) => {
+    setCurrentPage(page);
+    setIsSheetOpen(false);
+  };
 
   const renderContent = () => {
     switch (currentPage) {
       case 'dashboard':
         if (user.user_tipo === 'sindico') return <SindicoDashboard user={user} />;
         if (user.user_tipo === 'porteiro') return <PorteiroDashboard user={user} />;
-        return <MoradorDashboard user={user} />;
+        return <MoradorDashboard user={user} setCurrentPage={handlePageChange} />;
       case 'ambientes':
         return <Ambientes user={user} />;
       case 'reservas':
@@ -39,20 +45,24 @@ const Dashboard = ({ user, setUser }: DashboardProps) => {
       case 'conta':
         return <MinhaConta user={user} />;
       default:
-        return <MoradorDashboard user={user} />;
+        return <MoradorDashboard user={user} setCurrentPage={handlePageChange} />;
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header user={user} setUser={setUser} />
+      <Header user={user} setUser={setUser} onMenuClick={() => setIsSheetOpen(true)} />
       <div className="flex">
-        <Navigation 
-          user={user} 
-          currentPage={currentPage} 
-          setCurrentPage={setCurrentPage} 
-        />
-        <main className="flex-1 p-6 ml-0 lg:ml-64 transition-all duration-300">
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+          <SheetContent side="left" className="p-0 w-[280px] bg-white">
+            <Navigation
+              user={user}
+              currentPage={currentPage}
+              setCurrentPage={handlePageChange}
+            />
+          </SheetContent>
+        </Sheet>
+        <main className="flex-1 p-6 transition-all duration-300">
           {renderContent()}
         </main>
       </div>

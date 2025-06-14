@@ -1,12 +1,12 @@
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 interface MoradorDashboardProps {
   user: any;
+  setCurrentPage: (page: string) => void;
 }
 
-const MoradorDashboard = ({ user }: MoradorDashboardProps) => {
+const MoradorDashboard = ({ user, setCurrentPage }: MoradorDashboardProps) => {
   const mockReservas = [
     { id: 1, ambiente: 'Salão de Festas', data: '2024-01-20', horario: '19:00 - 23:00' },
     { id: 2, ambiente: 'Churrasqueira 1', data: '2024-01-25', horario: '12:00 - 16:00' },
@@ -28,7 +28,10 @@ const MoradorDashboard = ({ user }: MoradorDashboardProps) => {
 
       {/* Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+        <Card 
+          className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200"
+          onClick={() => setCurrentPage('ambientes')}
+        >
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
@@ -42,7 +45,10 @@ const MoradorDashboard = ({ user }: MoradorDashboardProps) => {
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+        <Card 
+          className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-green-50 to-green-100 border-green-200"
+          onClick={() => setCurrentPage('visitantes')}
+        >
           <CardContent className="p-6">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
@@ -74,7 +80,7 @@ const MoradorDashboard = ({ user }: MoradorDashboardProps) => {
                     <h4 className="font-medium text-gray-900">{reserva.ambiente}</h4>
                     <p className="text-sm text-gray-600">{reserva.data} • {reserva.horario}</p>
                   </div>
-                  <Button variant="outline" size="sm">Ver</Button>
+                  <Button variant="outline" size="sm" onClick={() => setCurrentPage('reservas')}>Ver</Button>
                 </div>
               ))}
             </div>

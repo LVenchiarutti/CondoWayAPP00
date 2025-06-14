@@ -1,8 +1,9 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import { Input } from '../ui/input';
 
 interface AmbientesProps {
   user: any;
@@ -10,6 +11,10 @@ interface AmbientesProps {
 
 const Ambientes = ({ user }: AmbientesProps) => {
   const [selectedAmbiente, setSelectedAmbiente] = useState(null);
+  const [dataReserva, setDataReserva] = useState('');
+  const [horaInicio, setHoraInicio] = useState('');
+  const [horaFim, setHoraFim] = useState('');
+  const { toast } = useToast();
 
   const ambientes = [
     {
@@ -19,16 +24,16 @@ const Ambientes = ({ user }: AmbientesProps) => {
       capacidade: '50 pessoas',
       disponivel: true,
       imagem: '🎉',
-      horarios: ['09:00-13:00', '14:00-18:00', '19:00-23:00']
+      regras: 'Horário de silêncio após as 22h. Limpeza obrigatória após o uso.'
     },
     {
       id: 2,
-      nome: 'Churrasqueira 1',
+      nome: 'Churrasqueira Coberta',
       descricao: 'Área de churrasqueira com mesas',
       capacidade: '20 pessoas',
       disponivel: true,
       imagem: '🔥',
-      horarios: ['10:00-14:00', '15:00-19:00', '20:00-00:00']
+      regras: 'Entregar o ambiente limpo após o uso.'
     },
     {
       id: 3,
@@ -37,7 +42,7 @@ const Ambientes = ({ user }: AmbientesProps) => {
       capacidade: '30 pessoas',
       disponivel: false,
       imagem: '🏊‍♂️',
-      horarios: ['08:00-12:00', '13:00-17:00', '18:00-22:00']
+      regras: 'Obrigatório exame médico. Proibido uso de bronzeadores à base de óleo.'
     },
     {
       id: 4,
@@ -46,7 +51,7 @@ const Ambientes = ({ user }: AmbientesProps) => {
       capacidade: '16 pessoas',
       disponivel: true,
       imagem: '🏐',
-      horarios: ['07:00-11:00', '14:00-18:00', '19:00-23:00']
+      regras: 'Uso exclusivo com calçados apropriados.'
     },
     {
       id: 5,
@@ -55,7 +60,7 @@ const Ambientes = ({ user }: AmbientesProps) => {
       capacidade: '8 pessoas',
       disponivel: true,
       imagem: '🧖‍♀️',
-      horarios: ['18:00-20:00', '20:00-22:00']
+      regras: 'Permanência máxima de 15 minutos.'
     },
     {
       id: 6,
@@ -64,9 +69,50 @@ const Ambientes = ({ user }: AmbientesProps) => {
       capacidade: '15 pessoas',
       disponivel: true,
       imagem: '🎱',
-      horarios: ['09:00-13:00', '14:00-18:00', '19:00-23:00']
-    }
+      regras: 'Manter os equipamentos organizados.'
+    },
+    {
+      id: 7,
+      nome: 'Churrasqueira Piscina',
+      descricao: 'Área de churrasqueira com mesas próxima à piscina',
+      capacidade: '40 pessoas',
+      disponivel: true,
+      imagem: '🔥🏊‍♂️',
+      regras: 'Entregar o ambiente limpo após o uso.'
+    },
+    
   ];
+
+  const handleConfirmarReserva = () => {
+    if (!dataReserva || !horaInicio || !horaFim) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Por favor, selecione a data, hora de início e hora de fim.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (horaFim <= horaInicio) {
+      toast({
+        title: "Horário inválido",
+        description: "A hora de fim deve ser posterior à hora de início.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Reserva solicitada!",
+      description: `Sua reserva para ${selectedAmbiente.nome} em ${new Date(dataReserva).toLocaleDateString('pt-BR')} das ${horaInicio} às ${horaFim} foi enviada.`,
+    });
+
+    // Resetar campos e voltar para a lista
+    setDataReserva('');
+    setHoraInicio('');
+    setHoraFim('');
+    setSelectedAmbiente(null);
+  };
 
   if (selectedAmbiente) {
     return (
@@ -100,14 +146,12 @@ const Ambientes = ({ user }: AmbientesProps) => {
                     </Badge>
                   </div>
                 </div>
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Horários Disponíveis</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedAmbiente.horarios.map((horario, index) => (
-                      <Badge key={index} variant="outline">{horario}</Badge>
-                    ))}
-                  </div>
-                </div>
+                 {selectedAmbiente.regras && (
+                    <div>
+                        <h4 className="font-medium text-gray-900 mb-2 mt-4">Regras de Utilização</h4>
+                        <p className="text-sm text-gray-600">{selectedAmbiente.regras}</p>
+                    </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -115,28 +159,39 @@ const Ambientes = ({ user }: AmbientesProps) => {
           <Card>
             <CardHeader>
               <CardTitle>📅 Fazer Reserva</CardTitle>
-              <CardDescription>Selecione data e horário desejado</CardDescription>
+              <CardDescription>Selecione a data e o período desejado</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700">Data</label>
-                  <input 
+                  <label className="text-sm font-medium text-gray-700 mb-2 block">Data</label>
+                  <Input 
                     type="date" 
-                    className="w-full mt-1 p-2 border border-gray-300 rounded-md"
+                    value={dataReserva}
+                    onChange={(e) => setDataReserva(e.target.value)}
                     min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700">Horário</label>
-                  <select className="w-full mt-1 p-2 border border-gray-300 rounded-md">
-                    <option value="">Selecione um horário</option>
-                    {selectedAmbiente.horarios.map((horario, index) => (
-                      <option key={index} value={horario}>{horario}</option>
-                    ))}
-                  </select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">Hora de Início</label>
+                    <Input
+                        type="time"
+                        value={horaInicio}
+                        onChange={(e) => setHoraInicio(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">Hora de Fim</label>
+                    <Input
+                        type="time"
+                        value={horaFim}
+                        onChange={(e) => setHoraFim(e.target.value)}
+                    />
+                  </div>
                 </div>
                 <Button 
+                  onClick={handleConfirmarReserva}
                   className="w-full bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
                   disabled={!selectedAmbiente.disponivel}
                 >
@@ -186,7 +241,7 @@ const Ambientes = ({ user }: AmbientesProps) => {
                   variant={ambiente.disponivel ? "default" : "secondary"}
                   disabled={!ambiente.disponivel}
                 >
-                  {ambiente.disponivel ? "Ver Agenda" : "Indisponível"}
+                  {ambiente.disponivel ? "Fazer Reserva" : "Indisponível"}
                 </Button>
               </div>
             </CardContent>

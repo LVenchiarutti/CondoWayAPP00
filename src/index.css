@@ -94,10 +94,12 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
 
   body {
-    @apply bg-background text-foreground;
+    /* CORREÇÃO AQUI: substituí '@apply' pelas variáveis CSS diretas */
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }

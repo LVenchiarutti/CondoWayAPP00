@@ -1,13 +1,14 @@
-
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { Menu } from 'lucide-react';
 
 interface HeaderProps {
   user: any;
   setUser: (user: any) => void;
+  onMenuClick: () => void;
 }
 
-const Header = ({ user, setUser }: HeaderProps) => {
+const Header = ({ user, setUser, onMenuClick }: HeaderProps) => {
   const { toast } = useToast();
 
   const handleLogout = () => {
@@ -32,13 +33,18 @@ const Header = ({ user, setUser }: HeaderProps) => {
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
       <div className="px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">CW</span>
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">CondoWay</h1>
-            <p className="text-sm text-gray-500">{user.condominio}</p>
+        <div className="flex items-center space-x-2">
+          <Button variant="ghost" size="icon" onClick={onMenuClick}>
+              <Menu className="h-6 w-6" />
+          </Button>
+          <div className="flex items-center space-x-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-green-500 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">CW</span>
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">CondoWay</h1>
+              <p className="text-sm text-gray-500">{user.condominio}</p>
+            </div>
           </div>
         </div>
         
